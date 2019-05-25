@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Street> curAreaStreetList = [];
   //create game item List for scenarios
   List<GameItem> gameItemList = [];
+  int gameItemListCount=0;
   //
   bool reverseSituation = false;
   //tasks
@@ -61,9 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
     taskList.add("Kayıp çiçeği bul");
     // add an item for this task
     gameItemList.add(GameItem("flover"));
-    gameItemList.add(GameItem("baby"));
+    //gameItemList.add(GameItem("baby"));
+    
     // locate item
     for (var i = 0; i < gameItemList.length; i++) {
+      // increase count for each gameitem
+      gameItemListCount++;
       // find random room to locate
       int selectedStreet = 0;
       int selectedApartment = 0;
@@ -462,7 +466,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   onTap: () {
-                    showModalBottomSheet(
+                    /*showModalBottomSheet(
                         context: context,
                         builder: (context) {
                           return Container(
@@ -472,7 +476,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             alignment: Alignment.center,
                             child: showTasks(),
                           );
-                        });
+                        });*/
+                        //temp
+                        showTasksCompletedWidget();
                   },
                 )),
             SizedBox(
@@ -731,7 +737,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             // remove from located room
                             setState(() {
                               curRoom.setItemLocated = false;
+                              gameItemListCount--;
                             });
+                            if(gameItemListCount<=0)
+                              showTasksCompletedWidget();
                             // change item status as "found"
                             gameItemList[curRoom.gameItemNo].setIsFound = true;
                           },
@@ -920,5 +929,53 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
         ]));
+  }
+  Widget showTasksCompletedWidget(){
+     showDialog(
+      context: context,
+      builder: (context){
+        List<Widget> taskListWidgets=[];
+        for(var i=0;i<taskList.length;i++){
+          taskListWidgets.add(
+            Row(mainAxisAlignment: MainAxisAlignment.start, 
+            children: <Widget>[
+          Icon(
+            Icons.check,
+            color: Colors.red[800],
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Text(
+            taskList[i],
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+        ]));
+        }
+        return AlertDialog(
+          title: Text("Görevler Tamamlandı",textAlign: TextAlign.center,style: TextStyle(color: Colors.white),),
+          titlePadding: EdgeInsets.all(25),
+          backgroundColor: Colors.red[700],
+          contentPadding: EdgeInsets.all(0),
+          content: SingleChildScrollView(child: 
+          Container(
+            padding: EdgeInsets.all(10),
+            color: Colors.white,
+            height: screenHeight*0.8,
+            width: screenWidth*0.95,
+            child: Column(children: taskListWidgets,),
+          ),
+          
+          ),
+          actions: <Widget>[
+            RaisedButton(padding: EdgeInsets.all(10), color:Colors.white, child: Text("Serbest Dolaş",style: TextStyle(color: Colors.red[900]),),onPressed: (){
+              Navigator.pop(context);
+            },),
+            RaisedButton(padding: EdgeInsets.all(10), color:Colors.white, child: Text("Oyunu Bitir",style: TextStyle(color: Colors.red[900]),),)
+           ],
+        );
+
+      }
+    );
   }
 }

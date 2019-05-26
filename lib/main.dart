@@ -11,8 +11,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       routes: {
         '/': (context) => new Home(),
-        '/scenario0': (context) => new Game(scenario: 0),
-        '/scenario1': (context) => new Game(scenario: 1),
       },
       onGenerateRoute: (RouteSettings settings) {
         List<String> pathElements = settings.name.split("/");

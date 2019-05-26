@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:mahallebi/objects/scenario.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'dart:math';
 import 'getDataFromJSON.dart';
+import 'objects/scenario.dart';
 import 'objects/address.dart';
 import 'objects/world.dart';
 import 'objects/street.dart';
@@ -18,6 +19,9 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
+  //creating sound player
+  final assetsAudioPlayer = AssetsAudioPlayer();
+  //
   Address curAddress = new Address(areaType: "streetView", streetNo: 0);
   //Screen width and height
   double screenHeight;
@@ -61,6 +65,7 @@ class _GameState extends State<Game> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 28,
+            fontWeight: FontWeight.w600,
             shadows: <Shadow>[
               Shadow(
                 offset: Offset(1.0, 1.0),
@@ -82,7 +87,9 @@ class _GameState extends State<Game> {
       ),*/
       body: Container(
         child: (scenarioLoaded == false)
-            ? CircularProgressIndicator()
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -392,7 +399,7 @@ class _GameState extends State<Game> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5),
       alignment: Alignment.center,
-      color: Colors.red[50],
+      color: Colors.orange[50],
       child: AutoSizeText(
         curAddress.fullAddress,
         maxLines: 1,
@@ -471,6 +478,7 @@ class _GameState extends State<Game> {
                         ),
                         AutoSizeText(
                           "Görev",
+                          maxLines: 1,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         )
@@ -512,6 +520,7 @@ class _GameState extends State<Game> {
                         ),
                         AutoSizeText(
                           "İpucu",
+                          maxLines: 1,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         )
@@ -541,6 +550,7 @@ class _GameState extends State<Game> {
                         Image.asset("assets/panelIcons/map.png"),
                         AutoSizeText(
                           "Harita",
+                          maxLines: 1,
                           style: TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         )
@@ -775,7 +785,14 @@ class _GameState extends State<Game> {
                             ),
                           ),
                           onTap: () {
+                            // play sound
+                            assetsAudioPlayer.open(AssetsAudio(
+                              asset: "itemfound.mp3",
+                              folder: "assets/audios/",
+                            ));
+                            assetsAudioPlayer.play();
                             //if found a game item
+
                             // remove from located room
                             setState(() {
                               curRoom.setItemLocated = false;
@@ -784,7 +801,8 @@ class _GameState extends State<Game> {
                             if (gameItemListCount <= 0)
                               showTasksCompletedWidget();
                             // change item status as "found"
-                            curScenario.taskList[curRoom.gameItemNo].setAsCompleted();
+                            curScenario.taskList[curRoom.gameItemNo]
+                                .setAsCompleted();
                           },
                         ))
             ],
@@ -831,11 +849,24 @@ class _GameState extends State<Game> {
   }
 
   void passToInside(areaType, selectedUnitNo) {
+    // play sound
+    assetsAudioPlayer.open(AssetsAudio(
+      asset: "unlocked.mp3",
+      folder: "assets/audios/",
+    ));
+    assetsAudioPlayer.play();
+    //
     String prevArea = areaType;
     //String nextArea;
     switch (prevArea) {
       //from street to apartment
       case "streetView":
+        // play sound
+        assetsAudioPlayer.open(AssetsAudio(
+          asset: "unlocked.mp3",
+          folder: "assets/audios/",
+        ));
+        assetsAudioPlayer.play();
         //print("passing to floor of apartment from street");
         setState(() {
           curAddress.setApartmentNo = selectedUnitNo;
@@ -844,6 +875,12 @@ class _GameState extends State<Game> {
         });
         break;
       case "floorView":
+        // play sound
+        assetsAudioPlayer.open(AssetsAudio(
+          asset: "locked.mp3",
+          folder: "assets/audios/",
+        ));
+        assetsAudioPlayer.play();
         //print("passing to room of house from floor of apartment");
         setState(() {
           curAddress.setAreaType = "roomView";
@@ -864,7 +901,8 @@ class _GameState extends State<Game> {
     //add title to Map widget
     mapRows.add(Text(
       "Mahallebi Haritası\n\n",
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      style: TextStyle(
+          fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red[900]),
     ));
     for (var i = 0; i < axisLength; i++) {
       List<Widget> rowIcons = [];
@@ -892,14 +930,14 @@ class _GameState extends State<Game> {
 
   Widget mapStreetIcon(streetNo) {
     return GestureDetector(
-      child: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(10),
-        color: Colors.grey,
-        child: SizedBox(
-          height: screenWidth / (axisLength * 4),
-          width: screenWidth / (axisLength * 2),
+      child: SizedBox(
+        height: screenWidth / (axisLength * 2),
+        width: screenWidth / (axisLength * 1.25),
+        child: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.all(5),
+          padding: EdgeInsets.all(5),
+          color: Colors.grey,
           child: AutoSizeText(
             world.streetList[streetNo].name,
             minFontSize: 8,
@@ -937,7 +975,8 @@ class _GameState extends State<Game> {
     for (var i = 0; i < curScenario.taskList.length; i++) {
       taskListWidgets.add(Container(
           padding: EdgeInsets.all(10),
-          child: showTaskItem(curScenario.taskList[i].detail,curScenario.taskList[i].isCompleted)));
+          child: showTaskItem(curScenario.taskList[i].detail,
+              curScenario.taskList[i].isCompleted)));
     }
     return SingleChildScrollView(
       child: Container(
@@ -949,7 +988,7 @@ class _GameState extends State<Game> {
     );
   }
 
-  Widget showTaskItem(taskDetail,isCompleted) {
+  Widget showTaskItem(taskDetail, isCompleted) {
     return Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
@@ -959,9 +998,7 @@ class _GameState extends State<Game> {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           Icon(
-            (isCompleted==true)?
-            Icons.check:
-            Icons.check_box_outline_blank,
+            (isCompleted == true) ? Icons.check : Icons.check_box_outline_blank,
             color: Colors.red[800],
           ),
           SizedBox(
@@ -994,7 +1031,7 @@ class _GameState extends State<Game> {
               height: screenHeight * 0.3,
               width: screenWidth * 0.95,
               child: Text(
-                ":(",//curAddress.fullAddress,
+                ":(", //curAddress.fullAddress,
                 maxLines: 2,
                 style: TextStyle(fontSize: 14),
               ),

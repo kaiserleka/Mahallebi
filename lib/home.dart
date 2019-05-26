@@ -17,7 +17,7 @@ class _HomeState extends State<Home> {
     GetDataFromJSON.getScenarioList().then((List<Scenario> dataList) {
       for (var i = 0; i < dataList.length; i++) {
         setState(() {
-          scenarioButtonList.add(scenarioButton(dataList[i].order));
+          scenarioButtonList.add(scenarioButton(dataList[i].order,dataList[i].name));
         });
       }
     }).catchError((err) => print("err:" + err.toString()));
@@ -58,27 +58,52 @@ class _HomeState extends State<Home> {
 
   Widget scenarioButtonsWidget() {
     return Column(
-      children: scenarioButtonList,
+     children: scenarioButtonList,
     );
   }
 
-  Widget scenarioButton(int scenarioOrder) {
+  Widget scenarioButton(int scenarioOrder,String scenarioName) {
     return Container(
+      decoration: BoxDecoration(
+        //border: Border.all(),
+        borderRadius: BorderRadius.circular(10),
+color: Colors.orange[50],
+      ),
+      alignment: Alignment.bottomLeft,
         margin: EdgeInsets.all(10),
-        child: RaisedButton.icon(
-            icon: Icon(
-              Icons.play_arrow,
-              size: 36,
-            ),
-            label: Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Senaryo-$scenarioOrder",
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[GestureDetector(
+          
+           
+            child: Container(
+              alignment: Alignment.centerLeft,
+              
+              padding: EdgeInsets.all(5),
+              child: Row(
+                children: <Widget>[
+Expanded(flex: 1,child: Icon(Icons.play_arrow,size: 36,),),
+                  Expanded(flex: 4,child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                "Senaryo:",
                 style: TextStyle(fontSize: 28),
               ),
+              Text(
+                scenarioName,
+                style: TextStyle(fontSize: 18),
+              ),
+                ],
+              ),)
+                ],
+              )
             ),
-            onPressed: () {
+            onTap: () {
               Navigator.pushNamed(context, "scenario/$scenarioOrder");
-            }));
+            })],
+        ));
   }
 }

@@ -765,6 +765,7 @@ class _GameState extends State<Game> {
                         )
                       : GestureDetector(
                           child: Container(
+                            //alignment: Alignment.topRight,
                             margin: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
@@ -781,7 +782,7 @@ class _GameState extends State<Game> {
                               curScenario.taskList[curRoom.gameItemNo]
                                   .gameItemIconData,
                               color: Colors.indigo[700],
-                              size: 96,
+                              size: screenWidth*0.15,
                             ),
                           ),
                           onTap: () {
@@ -1101,6 +1102,9 @@ class _GameState extends State<Game> {
                   "Oyunu Bitir",
                   style: TextStyle(color: Colors.red[900]),
                 ),
+                onPressed:(){
+                  Navigator.pushNamed(context, '/');
+                }
               )
             ],
           );

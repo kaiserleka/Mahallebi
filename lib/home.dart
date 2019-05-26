@@ -29,19 +29,20 @@ class _HomeState extends State<Home> {
       body: Container(
         color: Colors.red[800],
         alignment: Alignment.center,
-        padding: EdgeInsets.all(25),
+        //padding: EdgeInsets.all(25),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            Image.asset("assets/interface/header1.png",width: MediaQuery.of(context).size.width,),
+            /* Text(
               "Mahallebi",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
-            ),
+            ), */
             SizedBox(
               height: 30,
             ),
@@ -57,13 +58,16 @@ class _HomeState extends State<Home> {
   }
 
   Widget scenarioButtonsWidget() {
-    return Column(
+    return Container(
+      padding: EdgeInsets.all(25),
+      child: Column(
      children: scenarioButtonList,
-    );
+    ));
   }
 
   Widget scenarioButton(int scenarioOrder,String scenarioName) {
     return Container(
+      
       decoration: BoxDecoration(
         //border: Border.all(),
         borderRadius: BorderRadius.circular(10),

@@ -5,9 +5,9 @@ class Floor{
   //String _image;
   
   List<House> _houseList=[];
-  Floor(no){
+  Floor(no,housePerFloor){
     this._no=no;
-    for(var i=0;i<2;i++){
+    for(var i=0;i<housePerFloor;i++){
       House curHouse=new House(i);
       this._houseList.add(curHouse);
     }

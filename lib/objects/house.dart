@@ -7,6 +7,7 @@ class House {
   //
   House(no) {
     this._no = no;
+    // temporary 2 room per house
     for (var i = 0; i < 2; i++) {
       Room curRoom = Room();
       _roomList.add(curRoom);

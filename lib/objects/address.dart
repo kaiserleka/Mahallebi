@@ -44,12 +44,12 @@ class Address {
     return this._curStreetNo;
   }
 
-  String get streetText {
+  /*String get streetText {
     if (this._curStreetNo < InfoCenter.streetTypeList.length)
       return InfoCenter.streetTypeList[this._curStreetNo];
     else
       return "${this._curStreetNo}. Cadde";
-  }
+  }*/
 
   set setStreetNo(requestedData) {
     this._curStreetNo = requestedData;
@@ -57,12 +57,13 @@ class Address {
 
   // Apartment
   int get apartmentNo => this._curApartmentNo;
-  String get apartmentText {
+  /*String get apartmentText {
+
     return (this._curApartmentNo < InfoCenter.apartmentTypeList.length)
         ? InfoCenter.apartmentTypeList[this._curApartmentNo]["name"] +
             " Apartmanı"
         : "Apartman-$_curApartmentNo";
-  }
+  }*/
 
   set setApartmentNo(reqData) {
     this._curApartmentNo = reqData;
@@ -70,13 +71,13 @@ class Address {
 
   // Floor
   int get floorNo => this._curFloor;
-  String get floorText {
+  /*String get floorText {
     if (this._curFloor > 0)
       return this._curFloor.toString() + ". Kat";
     else if (this._curFloor == 0)
       return "Giriş Katı";
     else if (this._curFloor < 0) return "Bodrum Katı";
-  }
+  }*/
 
   set setCurFloor(reqData) {
     this._curFloor = reqData;
@@ -93,7 +94,7 @@ class Address {
   }
 
   //
-  String get currentAddressText {
+  /*String get currentAddressText {
     //print("--> currentArea "+this._area);
     switch (this._areaType) {
       case "streetView":
@@ -111,9 +112,9 @@ class Address {
       default:
         return "err";
     }
-  }
+  }*/
 
-  String getItemAddressText({level: 3}) {
+  /*String getItemAddressText({level: 3}) {
     switch (level) {
       case 3:
         return streetText +
@@ -131,5 +132,5 @@ class Address {
         return streetText;
       default:
     }
-  }
+  }*/
 }

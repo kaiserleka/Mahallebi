@@ -4,6 +4,7 @@ import 'floor.dart';
 
 class Apartment {
   int _no;
+  String _name;
   //String _image;
   String _typeImage;
   double _heightImage;
@@ -18,9 +19,10 @@ class Apartment {
     this._typeImage = InfoCenter.apartmentTypeList[type]["image"];
     this._heightImage = InfoCenter.apartmentTypeList[type]["height"];
     this._widthImage = InfoCenter.apartmentTypeList[type]["width"];
+    this._name=InfoCenter.apartmentTypeList[type]["name"];
     //number of floor
     for (var i = 0; i < InfoCenter.apartmentTypeList[type]["floorCount"]; i++) {
-      Floor curFloor = new Floor(i);
+      Floor curFloor = new Floor(i,InfoCenter.apartmentTypeList[type]["housePerFloor"]);
       this._floorList.add(curFloor);
     }
   }
@@ -34,8 +36,10 @@ class Apartment {
     return _widthImage;
   }
 
-  //
+  // apt no
   int get apartmentNo => this._no;
+  // apt name
+  String get apartmentName => this._name;
   // floors
   List<Floor> get floorList => this._floorList;
 }

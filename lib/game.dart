@@ -45,13 +45,13 @@ class _GameState extends State<Game> {
   //tasks
   Scenario curScenario;
   // number of hint
-  int hintCount = 3;
+  int hintCount = 300;
   // loading vars
   bool scenarioLoaded = false;
   //  time counter
   Timer gameTimer;
   Timer myTimer;
-  int timeDuration = 60;
+  int timeDuration = 600;
   String timeCounterText = "";
   Color timeCounterColor;
   //
@@ -177,10 +177,10 @@ class _GameState extends State<Game> {
                               border: Border.all(color: Colors.red[800]),
                               borderRadius: BorderRadius.circular(15)),
                           child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.4,
+                              width: MediaQuery.of(context).size.width * 0.5,
                               child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Icon(Icons.timer),
                                     Text("Kalan Süre: " + timeCounterText,
@@ -263,7 +263,7 @@ class _GameState extends State<Game> {
         locatingAddress.setApartmentNo = randomApartmentNumber;
         locatingAddress.setCurFloor = randomFloorNumber;
         locatingAddress.setCurHouse = randomHouseNumber;
-        print("LocAdd " + locatingAddress.getItemAddressText());
+        print("LocAdd " + getAddressText(reqAddress:locatingAddress,addressLevel: "3"));
 
         return locatingAddress;
       }
@@ -553,6 +553,53 @@ class _GameState extends State<Game> {
       
     }*/
   }
+  String getAddressText({Address reqAddress,addressLevel}){
+    Address selectedAddress=reqAddress;
+    String currentAddressText,streetName,apartmentName,floorName,houseName;
+    switch (addressLevel) {
+      case "0":
+      case "streetView":
+        streetName = world.streetList[selectedAddress.streetNo].name;
+        currentAddressText =streetName;
+        break;
+      case "1":
+        streetName = world.streetList[selectedAddress.streetNo].name;
+        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
+        currentAddressText=streetName+" / "+apartmentName;
+        break;
+      case "2":
+      case "floorView":
+        streetName = world.streetList[selectedAddress.streetNo].name;
+        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
+        if (selectedAddress.floorNo>0){
+          floorName=selectedAddress.floorNo.toString() + ". Kat";
+        }else if (selectedAddress.floorNo==0){
+          floorName="Giriş Kat";
+        }else if (selectedAddress.floorNo<0){
+          floorName="Bodrum Katı";
+        }
+        currentAddressText=streetName+" / "+apartmentName+" ("+floorName+")";
+        break;
+      case "3":
+      case "roomView":
+        streetName = world.streetList[selectedAddress.streetNo].name;
+        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
+        if (selectedAddress.floorNo>0){
+          floorName=selectedAddress.floorNo.toString() + ". Kat";
+        }else if (selectedAddress.floorNo==0){
+          floorName="Giriş Kat";
+        }else if (selectedAddress.floorNo<0){
+          floorName="Bodrum Katı";
+        }
+        houseName="Daire-" + selectedAddress.houseNo.toString();
+        currentAddressText=streetName+" / "+apartmentName+" ("+floorName+") / "+houseName;
+        break;
+      default:
+        return "err: Address Error";
+    }
+    
+    return currentAddressText;
+  }
 
   Widget displayAddressBar(Address curAddress) {
     return Container(
@@ -560,7 +607,7 @@ class _GameState extends State<Game> {
       alignment: Alignment.center,
       color: Colors.orange[50],
       child: AutoSizeText(
-        curAddress.currentAddressText,
+        getAddressText(reqAddress:curAddress,addressLevel: curAddress.areaType),
         maxLines: 1,
         minFontSize: 8,
         style: TextStyle(
@@ -1190,6 +1237,11 @@ class _GameState extends State<Game> {
           ),
         ]));
   }
+  /*String getItemAddressText(reqAddress,level) {
+    String itemAddressText;
+
+    return itemAddressText;
+  }*/
 
   Widget showHint() {
     //decrease hint count when using hint
@@ -1200,10 +1252,8 @@ class _GameState extends State<Game> {
     int hintItemNo = Random().nextInt(unfoundedGameItemAddressList.length);
     // select a random hint level
     int hintLevel = Random().nextInt(4);
-
     // set hint text dependin on item
-    String hintText = unfoundedGameItemAddressList[hintItemNo]
-        .getItemAddressText(level: hintLevel);
+    String hintText = getAddressText(reqAddress:unfoundedGameItemAddressList[hintItemNo],addressLevel:hintLevel.toString());
     // show dialog
     showDialog(
         context: context,

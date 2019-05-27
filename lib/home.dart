@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mahallebi/objects/scenario.dart';
-import 'getDataFromJSON.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -8,21 +6,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Widget> scenarioButtonList = [];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    GetDataFromJSON.getScenarioList().then((List<Scenario> dataList) {
-      for (var i = 0; i < dataList.length; i++) {
-        setState(() {
-          scenarioButtonList.add(scenarioButton(dataList[i].order,dataList[i].name));
-        });
-      }
-    }).catchError((err) => print("err:" + err.toString()));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +17,10 @@ class _HomeState extends State<Home> {
           //mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Image.asset("assets/interface/header1.png",width: MediaQuery.of(context).size.width,),
+            Image.asset(
+              "assets/interface/header1.png",
+              width: MediaQuery.of(context).size.width,
+            ),
             /* Text(
               "Mahallebi",
               textAlign: TextAlign.center,
@@ -46,68 +32,52 @@ class _HomeState extends State<Home> {
             SizedBox(
               height: 30,
             ),
-            (scenarioButtonList.length <= 0)
-                ? LinearProgressIndicator(
-                    backgroundColor: Colors.orange,
-                  )
-                : scenarioButtonsWidget(),
+            menuItem(
+                buttonText: "Senaryo Seç",
+                buttonIcon: Icons.playlist_play,
+                target: "scenarioMenu"),
+            menuItem(
+              buttonText: "Serbest Dolaş",
+              buttonIcon: Icons.play_arrow,
+            ),
+            menuItem(
+                buttonText: "Ayarlar",
+                buttonIcon: Icons.settings,
+                target: "settingsMenu")
           ],
         ),
       ),
     );
   }
 
-  Widget scenarioButtonsWidget() {
+  Widget menuItem({buttonText, buttonIcon, target}) {
     return Container(
-      padding: EdgeInsets.all(25),
-      child: Column(
-     children: scenarioButtonList,
-    ));
-  }
-
-  Widget scenarioButton(int scenarioOrder,String scenarioName) {
-    return Container(
-      
-      decoration: BoxDecoration(
-        //border: Border.all(),
-        borderRadius: BorderRadius.circular(10),
-color: Colors.orange[50],
-      ),
-      alignment: Alignment.bottomLeft,
-        margin: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[GestureDetector(
-          
-           
-            child: Container(
-              alignment: Alignment.centerLeft,
-              
-              padding: EdgeInsets.all(5),
-              child: Row(
-                children: <Widget>[
-Expanded(flex: 1,child: Icon(Icons.play_arrow,size: 36,),),
-                  Expanded(flex: 4,child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                "Senaryo:",
-                style: TextStyle(fontSize: 28),
+        //color: Colors.black,
+        margin: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+        decoration: BoxDecoration(
+          //border: Border.all(),
+          borderRadius: BorderRadius.circular(10),
+          color: (target != null) ? Colors.white : Colors.grey,
+        ),
+        child: Row(
+          //crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+                flex: 1,
+                child: Icon(
+                  buttonIcon,
+                  size: 36,
+                )),
+            Expanded(
+              flex: 5,
+              child: GestureDetector(
+                child: Text(buttonText),
+                onTap: () {
+                  if (target != null) Navigator.pushNamed(context, "/$target");
+                },
               ),
-              Text(
-                scenarioName,
-                style: TextStyle(fontSize: 18),
-              ),
-                ],
-              ),)
-                ],
-              )
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, "scenario/$scenarioOrder");
-            })],
+            )
+          ],
         ));
   }
 }

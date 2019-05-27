@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:math';
 import 'getDataFromJSON.dart';
 import 'objects/scenario.dart';
@@ -21,6 +23,8 @@ class Game extends StatefulWidget {
 class _GameState extends State<Game> {
   //creating sound player
   final assetsAudioPlayer = AssetsAudioPlayer();
+  // game paused
+  bool gamePaused = false;
   //
   Address curAddress = new Address(areaType: "streetView", streetNo: 0);
   //Screen width and height
@@ -33,14 +37,23 @@ class _GameState extends State<Game> {
   //world current area objects
   List<Street> curAreaStreetList = [];
   //create game item List for scenarios
-  List<GameItem> gameItemList = [];
+  //List<GameItem> gameItemList = [];
+  List<Address> unfoundedGameItemAddressList = [];
   int gameItemListCount = 0;
   //
   bool reverseSituation = false;
   //tasks
   Scenario curScenario;
+  // number of hint
+  int hintCount = 3;
   // loading vars
   bool scenarioLoaded = false;
+  //  time counter
+  Timer gameTimer;
+  Timer myTimer;
+  int timeDuration = 60;
+  String timeCounterText = "";
+  Color timeCounterColor;
   //
   @override
   void initState() {
@@ -50,6 +63,47 @@ class _GameState extends State<Game> {
     loadScenario(widget.scenario);
     // create world
     world = World(axisLength);
+    // start timer
+    //timeCounter = timeDuration.toString();
+    //gameTimer = Timer(Duration(seconds: 10), timeIsUp);
+    // assign first value of timertextWidget
+    setState(() {
+      timeCounterText = timeDuration.toString();
+    });
+    //set and start timer
+    myTimer = Timer.periodic(Duration(seconds: 1), (gameTimer) {
+      // time is up control and check if game is paused or not
+      if (gameTimer.tick < timeDuration + 1 && gamePaused == false)
+        showTime(gameTimer);
+      else {
+        gameTimer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    myTimer.cancel();
+    print("cancel the timer");
+    super.dispose();
+  }
+
+  void showTime(Timer gameTimer) {
+    int leftValue = (timeDuration) - gameTimer.tick;
+    setState(() {
+      timeCounterText = leftValue.toString();
+      if (leftValue > 10)
+        timeCounterColor = Colors.grey[900];
+      else if (leftValue < 10 && leftValue >= 5) {
+        timeCounterColor = Colors.orange[800];
+      } else if (leftValue < 5 && leftValue > 0) {
+        timeCounterColor = Colors.red[800];
+      } else if (leftValue <= 0) {
+        endGameWidget("timeisup");
+        timeCounterColor = Colors.red[400];
+      }
+    });
   }
 
   @override
@@ -112,9 +166,38 @@ class _GameState extends State<Game> {
                   Expanded(
                     flex: 2,
                     child: Container(
+                      alignment: Alignment.center,
                       color: Colors.red,
+                      child: Container(
+                          //alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.red[800]),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Icon(Icons.timer),
+                                    Text("Kalan Süre: " + timeCounterText,
+                                        style: TextStyle(
+                                          color: timeCounterColor,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                          /*shadows: [
+                              Shadow(
+                                  color: Colors.red[900],
+                                  offset: Offset(3, 2),
+                                  blurRadius: 1),
+                            ]*/
+                                        )),
+                                  ]))),
                     ),
-                  ),
+                  )
                 ],
               ),
       ),
@@ -146,28 +229,82 @@ class _GameState extends State<Game> {
         });
   }
 
+  Address getRandomAddress() {
+    // make random address
+    Address locatingAddress = Address();
+    while (true) {
+      int randomStreetNumber = Random().nextInt(world.streetList.length);
+      int randomApartmentNumber = Random()
+          .nextInt(world.streetList[randomStreetNumber].apartmentList.length);
+      int randomFloorNumber = Random().nextInt(world
+          .streetList[randomStreetNumber]
+          .apartmentList[randomApartmentNumber]
+          .floorList
+          .length);
+      int randomHouseNumber = Random().nextInt(world
+          .streetList[randomStreetNumber]
+          .apartmentList[randomApartmentNumber]
+          .floorList[randomFloorNumber]
+          .houseList
+          .length);
+
+      if (world
+              .streetList[randomStreetNumber]
+              .apartmentList[randomApartmentNumber]
+              .floorList[randomFloorNumber]
+              .houseList[randomHouseNumber]
+              .roomList[0]
+              .itemLocated ==
+          true) {
+        print("dolu");
+      } else {
+        //boş adres bulundu
+        locatingAddress.setStreetNo = randomStreetNumber;
+        locatingAddress.setApartmentNo = randomApartmentNumber;
+        locatingAddress.setCurFloor = randomFloorNumber;
+        locatingAddress.setCurHouse = randomHouseNumber;
+        print("LocAdd " + locatingAddress.getItemAddressText());
+
+        return locatingAddress;
+      }
+    }
+  }
+
   void locateGameItems() {
     // locate item
     for (var i = 0; i < curScenario.taskList.length; i++) {
+      Address locatingAddress = getRandomAddress();
+      // find a empty room as random (4=> 0-3)
       // increase count for each gameitem
       gameItemListCount++;
       // find random room to locate
-      int selectedStreet = 0;
-      int selectedApartment = 0;
+      int selectedStreet = locatingAddress.streetNo;
+      int selectedApartment = locatingAddress.apartmentNo;
       int selectedFloor = 0;
-      int selectedHouse = 0;
+
+      /// !!! locatingAddress.floorNo;
+      int selectedHouse = locatingAddress.houseNo;
       // make that room's itemLocated true
       world
           .streetList[selectedStreet]
           .apartmentList[selectedApartment]
           .floorList[selectedFloor]
-          .houseList[i]
+          .houseList[selectedHouse]
           .roomList[0]
           .setItemLocated = true;
       // set that room's itemNo
-      world.streetList[selectedStreet].apartmentList[selectedApartment]
-          .floorList[selectedFloor].houseList[i].roomList[0].setGameItemNo = i;
+      world
+          .streetList[selectedStreet]
+          .apartmentList[selectedApartment]
+          .floorList[selectedFloor]
+          .houseList[selectedHouse]
+          .roomList[0]
+          .setGameItemNo = i;
+      //henüz bulunmayanlar adres listesine ekle
+      unfoundedGameItemAddressList.add(locatingAddress);
     }
+    print("length of unfoundedGameItemAddressList " +
+        unfoundedGameItemAddressList.length.toString());
   }
 
   Widget displayArea(Address curAddress) {
@@ -229,8 +366,14 @@ class _GameState extends State<Game> {
                 isRightSide: false));
           break;
         case "floorView":
+        if (curAddress.floorNo < world.streetList[curAddress.streetNo].apartmentList[curAddress.apartmentNo].floorList.length-1)
           buttonList.add(displaySideMenuItem(
-              "assets/gameIcons/door-exit.png", "Caddeye", 0));
+              "assets/gameIcons/up-floor.png", "Üst Kata", "upFloor"));
+          if (curAddress.floorNo > 0)
+            buttonList.add(displaySideMenuItem(
+                "assets/gameIcons/down-floor.png", "Alt Kata", "downFloor"));
+          buttonList.add(displaySideMenuItem(
+              "assets/gameIcons/door-exit.png", "Caddeye", "toStreet"));
           break;
         case "roomView":
           buttonList.add(displaySideMenuItem(
@@ -324,9 +467,25 @@ class _GameState extends State<Game> {
 
               break;
             case "floorView":
-              setState(() {
-                curAddress.setAreaType = "streetView";
-              });
+              switch (targetValue) {
+                case "toStreet":
+                  setState(() {
+                    curAddress.setAreaType = "streetView";
+                  });
+                  break;
+                case "upFloor":
+                  setState(() {
+                    curAddress.setCurFloor = curAddress.floorNo + 1;
+                  });
+
+                  break;
+                case "downFloor":
+                  setState(() {
+                    curAddress.setCurFloor = curAddress.floorNo - 1;
+                  });
+
+                  break;
+              }
               break;
             case "roomView":
               setState(() {
@@ -401,7 +560,7 @@ class _GameState extends State<Game> {
       alignment: Alignment.center,
       color: Colors.orange[50],
       child: AutoSizeText(
-        curAddress.fullAddress,
+        curAddress.currentAddressText,
         maxLines: 1,
         minFontSize: 8,
         style: TextStyle(
@@ -513,10 +672,18 @@ class _GameState extends State<Game> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
+                        /*Icon(
                           Icons.lightbulb_outline,
                           color: Colors.yellow[200],
                           size: 32,
+                        ),*/
+                        AutoSizeText(
+                          hintCountText(),
+                          maxLines: 1,
+                          style: TextStyle(
+                              fontSize: 28,
+                              color: Colors.orangeAccent[400],
+                              fontWeight: FontWeight.bold),
                         ),
                         AutoSizeText(
                           "İpucu",
@@ -528,8 +695,9 @@ class _GameState extends State<Game> {
                     ),
                   ),
                   onTap: () {
-                    //temp
-                    showHint();
+                    if (gamePaused == false &&
+                        hintCount > 0 &&
+                        unfoundedGameItemAddressList.length > 0) showHint();
                   },
                 )),
             SizedBox(
@@ -759,7 +927,7 @@ class _GameState extends State<Game> {
                   ))),
               Expanded(
                   flex: 3,
-                  child: (hasGameItem == false)
+                  child: (hasGameItem == false || gamePaused == true)
                       ? SizedBox(
                           height: 0,
                         )
@@ -782,11 +950,11 @@ class _GameState extends State<Game> {
                               curScenario.taskList[curRoom.gameItemNo]
                                   .gameItemIconData,
                               color: Colors.indigo[700],
-                              size: screenWidth*0.15,
+                              size: screenWidth * 0.15,
                             ),
                           ),
                           onTap: () {
-                            // play sound
+                            // play item found sound
                             assetsAudioPlayer.open(AssetsAudio(
                               asset: "itemfound.mp3",
                               folder: "assets/audios/",
@@ -799,11 +967,28 @@ class _GameState extends State<Game> {
                               curRoom.setItemLocated = false;
                               gameItemListCount--;
                             });
-                            if (gameItemListCount <= 0)
-                              showTasksCompletedWidget();
+
+                            if (gameItemListCount <= 0) endGameWidget("win");
                             // change item status as "found"
                             curScenario.taskList[curRoom.gameItemNo]
                                 .setAsCompleted();
+                            // also remove from unfounded address list
+                            unfoundedGameItemAddressList.removeWhere(
+                                (address) =>
+                                    address.streetNo == curAddress.streetNo &&
+                                    address.apartmentNo ==
+                                        curAddress.apartmentNo &&
+                                    address.floorNo == curAddress.floorNo &&
+                                    address.houseNo == curAddress.houseNo);
+
+                            /*print("unfounded item addresses:\n");
+                            for (var i = 0;
+                                i < unfoundedGameItemAddressList.length;
+                                i++) {
+                              print("> " +
+                                  unfoundedGameItemAddressList[i]
+                                      .getItemAddressText());
+                            }*/
                           },
                         ))
             ],
@@ -850,13 +1035,6 @@ class _GameState extends State<Game> {
   }
 
   void passToInside(areaType, selectedUnitNo) {
-    // play sound
-    assetsAudioPlayer.open(AssetsAudio(
-      asset: "unlocked.mp3",
-      folder: "assets/audios/",
-    ));
-    assetsAudioPlayer.play();
-    //
     String prevArea = areaType;
     //String nextArea;
     switch (prevArea) {
@@ -937,7 +1115,7 @@ class _GameState extends State<Game> {
         child: Container(
           alignment: Alignment.center,
           margin: EdgeInsets.all(5),
-          padding: EdgeInsets.all(5),
+          padding: EdgeInsets.all(2),
           color: Colors.grey,
           child: AutoSizeText(
             world.streetList[streetNo].name,
@@ -949,6 +1127,7 @@ class _GameState extends State<Game> {
       onTap: () {
         setState(() {
           curAddress.setStreetNo = streetNo;
+          curAddress.setAreaType = "streetView";
         });
         Navigator.pop(context);
       },
@@ -1013,6 +1192,19 @@ class _GameState extends State<Game> {
   }
 
   Widget showHint() {
+    //decrease hint count when using hint
+    setState(() {
+      hintCount--;
+    });
+    // select a random item to show hint
+    int hintItemNo = Random().nextInt(unfoundedGameItemAddressList.length);
+    // select a random hint level
+    int hintLevel = Random().nextInt(4);
+
+    // set hint text dependin on item
+    String hintText = unfoundedGameItemAddressList[hintItemNo]
+        .getItemAddressText(level: hintLevel);
+    // show dialog
     showDialog(
         context: context,
         builder: (context) {
@@ -1026,22 +1218,61 @@ class _GameState extends State<Game> {
             backgroundColor: Colors.red[700],
             contentPadding: EdgeInsets.all(0),
             content: Container(
-              alignment: Alignment.center,
+              //alignment: Alignment.center,
               padding: EdgeInsets.all(10),
               color: Colors.white,
               height: screenHeight * 0.3,
               width: screenWidth * 0.95,
-              child: Text(
-                ":(", //curAddress.fullAddress,
-                maxLines: 2,
-                style: TextStyle(fontSize: 14),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  AutoSizeText(
+                    hintText,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Kalan İpucu Hakkın: ",
+                        maxLines: 2,
+                        style: TextStyle(fontSize: 20, color: Colors.red[900]),
+                      ),
+                      Text(
+                        hintCount.toString(),
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.red[900],
+                            fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                ],
               ),
             ),
           );
         });
   }
 
-  Widget showTasksCompletedWidget() {
+  Widget endGameWidget(String endType) {
+    //make game paused
+    setState(() {
+      gamePaused = true;
+    });
+    String alertTitle;
+    switch (endType) {
+      case "win":
+        alertTitle = "Görevler Tamamlandı";
+        break;
+      case "timeisup":
+        alertTitle = "Süre Doldu";
+        break;
+    }
     showDialog(
         context: context,
         builder: (context) {
@@ -1051,7 +1282,9 @@ class _GameState extends State<Game> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Icon(
-                    Icons.check,
+                    (curScenario.taskList[i].isCompleted)
+                        ? Icons.check
+                        : Icons.check_box_outline_blank,
                     color: Colors.red[800],
                   ),
                   SizedBox(
@@ -1065,7 +1298,7 @@ class _GameState extends State<Game> {
           }
           return AlertDialog(
             title: Text(
-              "Görevler Tamamlandı",
+              alertTitle,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white),
             ),
@@ -1096,18 +1329,24 @@ class _GameState extends State<Game> {
                 },
               ),
               RaisedButton(
-                padding: EdgeInsets.all(10),
-                color: Colors.white,
-                child: Text(
-                  "Oyunu Bitir",
-                  style: TextStyle(color: Colors.red[900]),
-                ),
-                onPressed:(){
-                  Navigator.pushNamed(context, '/');
-                }
-              )
+                  padding: EdgeInsets.all(10),
+                  color: Colors.white,
+                  child: Text(
+                    "Oyunu Bitir",
+                    style: TextStyle(color: Colors.red[900]),
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  })
             ],
           );
         });
+  }
+
+  String hintCountText() {
+    if (hintCount > 0)
+      return hintCount.toString();
+    else
+      return "-";
   }
 }

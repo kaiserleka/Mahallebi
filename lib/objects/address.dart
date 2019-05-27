@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../infoCenter.dart';
 
-
 class Address {
   //Street _street;
   //Apartment _apartment;
@@ -25,19 +24,21 @@ class Address {
   set setAreaType(reqData) {
     this._areaType = reqData;
   }
-  // ground 
+
+  // ground
   //get groundColor => this._groundColor;
-  get groundColor{
-    if(this._areaType=="streetView")
+  get groundColor {
+    if (this._areaType == "streetView")
       return Colors.green[800];
-      else if(this._areaType=="floorView")
+    else if (this._areaType == "floorView")
       return Colors.green[600];
-      else if(this._areaType=="roomView")
-      return Colors.brown[400];
+    else if (this._areaType == "roomView") return Colors.brown[400];
   }
-  set setGroundColor (reqData){
-    this._groundColor=reqData;
+
+  set setGroundColor(reqData) {
+    this._groundColor = reqData;
   }
+
   // Street
   int get streetNo {
     return this._curStreetNo;
@@ -58,7 +59,8 @@ class Address {
   int get apartmentNo => this._curApartmentNo;
   String get apartmentText {
     return (this._curApartmentNo < InfoCenter.apartmentTypeList.length)
-        ? InfoCenter.apartmentTypeList[this._curApartmentNo]["name"]+ " Apartmanı"
+        ? InfoCenter.apartmentTypeList[this._curApartmentNo]["name"] +
+            " Apartmanı"
         : "Apartman-$_curApartmentNo";
   }
 
@@ -83,13 +85,15 @@ class Address {
   // House
   int get houseNo => this._curHouse;
   String get houseText {
-    return "Daire "+this._curHouse.toString();
+    return "Daire " + this._curHouse.toString();
   }
-  set setCurHouse(reqData){
-    this._curHouse=reqData;
+
+  set setCurHouse(reqData) {
+    this._curHouse = reqData;
   }
+
   //
-  String get fullAddress {
+  String get currentAddressText {
     //print("--> currentArea "+this._area);
     switch (this._areaType) {
       case "streetView":
@@ -101,10 +105,31 @@ class Address {
             " / " +
             apartmentText +
             " / " +
-            floorText +" / "+
+            floorText +
+            " / " +
             houseText;
       default:
         return "err";
+    }
+  }
+
+  String getItemAddressText({level: 3}) {
+    switch (level) {
+      case 3:
+        return streetText +
+            " / " +
+            apartmentText +
+            " / " +
+            floorText +
+            " / " +
+            houseText;
+      case 2:
+        return streetText + " / " + apartmentText + " / " + floorText;
+      case 1:
+        return streetText + " / " + apartmentText;
+      case 0:
+        return streetText;
+      default:
     }
   }
 }

@@ -3,8 +3,8 @@ import 'room.dart';
 class House {
   int _no;
   //String _image;
-
   List<Room> _roomList = [];
+  //
   House(no) {
     this._no = no;
     for (var i = 0; i < 2; i++) {

@@ -16,5 +16,5 @@ class Floor{
   String get unitImageAddress {
     return "assets/floors/floor0.png";
   }
-  get houseList => this._houseList;
+  List<House> get houseList => this._houseList;
 }

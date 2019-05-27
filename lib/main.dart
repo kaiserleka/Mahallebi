@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mahallebi/settingsMenu.dart';
 import 'game.dart';
 import 'home.dart';
+import 'scenarioMenu.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -11,6 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       routes: {
         '/': (context) => new Home(),
+        '/scenarioMenu': (context)=> new ScenarioMenu(),
+        '/settingsMenu': (context)=> new SettingsMenu()
       },
       onGenerateRoute: (RouteSettings settings) {
         List<String> pathElements = settings.name.split("/");
@@ -29,4 +34,5 @@ class MyApp extends StatelessWidget {
       // home: new Homes(),
     );
   }
+  
 }

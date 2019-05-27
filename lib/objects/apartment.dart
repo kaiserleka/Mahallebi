@@ -8,7 +8,6 @@ class Apartment {
   String _typeImage;
   double _heightImage;
   double _widthImage;
-  //int _floorCount;
   List<Floor> _floorList = [];
 
   Apartment(no) {
@@ -20,7 +19,7 @@ class Apartment {
     this._heightImage = InfoCenter.apartmentTypeList[type]["height"];
     this._widthImage = InfoCenter.apartmentTypeList[type]["width"];
     //number of floor
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < InfoCenter.apartmentTypeList[type]["floorCount"]; i++) {
       Floor curFloor = new Floor(i);
       this._floorList.add(curFloor);
     }

@@ -45,7 +45,7 @@ class _GameState extends State<Game> {
   //tasks
   Scenario curScenario;
   // number of hint
-  int hintCount = 300;
+  int hintCount = 30;
   // loading vars
   bool scenarioLoaded = false;
   //  time counter
@@ -68,7 +68,7 @@ class _GameState extends State<Game> {
     //gameTimer = Timer(Duration(seconds: 10), timeIsUp);
     // assign first value of timertextWidget
     setState(() {
-      timeCounterText = "";//timeDuration.toString();
+      timeCounterText = ""; //timeDuration.toString();
     });
     //set and start timer
     myTimer = Timer.periodic(Duration(seconds: 1), (gameTimer) {
@@ -146,7 +146,7 @@ class _GameState extends State<Game> {
             child: SingleChildScrollView(child: Text(""))),
       ),*/
       body: Container(
-        child: (scenarioLoaded == false )
+        child: (scenarioLoaded == false)
             ? Center(
                 child: CircularProgressIndicator(),
               )
@@ -174,37 +174,44 @@ class _GameState extends State<Game> {
                     child: Container(
                       alignment: Alignment.center,
                       color: Colors.red,
-                      child: (timeDuration <= 0 || timeCounterText == "")
-                          ? LinearProgressIndicator(backgroundColor: Colors.white30,)
-                          : Container(
-                              //alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: Colors.red[800]),
-                                  borderRadius: BorderRadius.circular(15)),
-                              child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Icon(Icons.timer),
-                                        Text("Kalan Süre: " + timeCounterText,
-                                            style: TextStyle(
-                                              color: timeCounterColor,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                              /*shadows: [
+                      child: (timeDuration <= 0)
+                          ? SizedBox(width: 0)
+                          : (timeCounterText == "")
+                              ? LinearProgressIndicator(
+                                  backgroundColor: Colors.white30,
+                                )
+                              : Container(
+                                  //alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border:
+                                          Border.all(color: Colors.red[800]),
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Icon(Icons.timer),
+                                            Text(
+                                                "Kalan Süre: " +
+                                                    timeCounterText,
+                                                style: TextStyle(
+                                                  color: timeCounterColor,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w700,
+                                                  /*shadows: [
                               Shadow(
                                   color: Colors.red[900],
                                   offset: Offset(3, 2),
                                   blurRadius: 1),
                             ]*/
-                                            )),
-                                      ]))),
+                                                )),
+                                          ]))),
                     ),
                   )
                 ],
@@ -1222,6 +1229,21 @@ class _GameState extends State<Game> {
           Shadow(
             offset: Offset(1.0, 1.0),
             blurRadius: 3.0,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ],
+      ),
+    ));
+    taskListWidgets.add(Text(
+      curScenario.description,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+        shadows: <Shadow>[
+          Shadow(
+            offset: Offset(1.0, 1.0),
+            blurRadius: 1.0,
             color: Color.fromARGB(255, 0, 0, 0),
           ),
         ],

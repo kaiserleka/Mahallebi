@@ -93,7 +93,7 @@ class _ScenarioMenuState extends State<ScenarioMenu> {
                         Expanded(
                           flex: 1,
                           child: Icon(
-                            Icons.play_arrow,
+                            Icons.play_circle_outline,
                             size: 36,
                           ),
                         ),

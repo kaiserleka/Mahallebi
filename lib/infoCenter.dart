@@ -3,7 +3,9 @@ class InfoCenter {
   static   List<String> streetTypeList=[
     "Yakacık Caddesi",
     "Spor Caddesi",
-    "Ulus Caddesi"];
+    "Ulus Caddesi",
+    "Aydınlık Caddesi",
+    "Cumhuriyet Caddesi"];
 
   //Apartment List
   static List<Map<String, dynamic>> apartmentTypeList = [

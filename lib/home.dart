@@ -36,14 +36,14 @@ class _HomeState extends State<Home> {
                 buttonText: "Senaryo Seç",
                 buttonIcon: Icons.playlist_play,
                 target: "scenarioMenu"),
-            menuItem(
+            /*menuItem(
               buttonText: "Serbest Dolaş",
               buttonIcon: Icons.play_arrow,
-            ),
-            menuItem(
+            ),*/
+           /* menuItem(
                 buttonText: "Ayarlar",
                 buttonIcon: Icons.settings,
-                target: "settingsMenu")
+                target: "settingsMenu")*/
           ],
         ),
       ),
@@ -66,12 +66,16 @@ class _HomeState extends State<Home> {
                 flex: 1,
                 child: Icon(
                   buttonIcon,
+                  color: Colors.red[900],
                   size: 36,
                 )),
             Expanded(
               flex: 5,
               child: GestureDetector(
-                child: Text(buttonText),
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  child: Text(buttonText,style: TextStyle(fontSize: 30,fontWeight: FontWeight.w700),),
+                ),
                 onTap: () {
                   if (target != null) Navigator.pushNamed(context, "/$target");
                 },

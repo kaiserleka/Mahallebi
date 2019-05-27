@@ -18,7 +18,7 @@ class _ScenarioMenuState extends State<ScenarioMenu> {
       for (var i = 0; i < dataList.length; i++) {
         setState(() {
           scenarioButtonList
-              .add(scenarioButton(dataList[i].order, dataList[i].name));
+              .add(scenarioButton(dataList[i].order, dataList[i].name,dataList[i].no));
         });
       }
     }).catchError((err) => print("err:" + err.toString()));
@@ -71,7 +71,7 @@ class _ScenarioMenuState extends State<ScenarioMenu> {
         ));
   }
 
-  Widget scenarioButton(int scenarioOrder, String scenarioName) {
+  Widget scenarioButton(int scenarioOrder, String scenarioName,int scenarioNo) {
     return Container(
         decoration: BoxDecoration(
           //border: Border.all(),
@@ -104,12 +104,13 @@ class _ScenarioMenuState extends State<ScenarioMenu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                "Senaryo:",
-                                style: TextStyle(fontSize: 28),
+                                scenarioName,
+                                style: TextStyle(fontSize: 28,fontWeight: FontWeight.w700),
+                                
                               ),
                               Text(
-                                scenarioName,
-                                style: TextStyle(fontSize: 18),
+                                "Senaryo No:"+scenarioNo.toString(),
+                                style: TextStyle(fontSize: 14),
                               ),
                             ],
                           ),

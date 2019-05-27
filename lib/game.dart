@@ -51,7 +51,7 @@ class _GameState extends State<Game> {
   //  time counter
   Timer gameTimer;
   Timer myTimer;
-  int timeDuration = 600;
+  int timeDuration;
   String timeCounterText = "";
   Color timeCounterColor;
   //
@@ -68,7 +68,7 @@ class _GameState extends State<Game> {
     //gameTimer = Timer(Duration(seconds: 10), timeIsUp);
     // assign first value of timertextWidget
     setState(() {
-      timeCounterText = timeDuration.toString();
+      timeCounterText = "";//timeDuration.toString();
     });
     //set and start timer
     myTimer = Timer.periodic(Duration(seconds: 1), (gameTimer) {
@@ -130,7 +130,13 @@ class _GameState extends State<Game> {
           ),
         )),
         actions: <Widget>[
-          //Icon(Icons.access_alarm)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Icon(
+              Icons.blur_circular,
+              color: Colors.red,
+            ),
+          )
         ],
       ),
       /*drawer: Drawer(
@@ -140,7 +146,7 @@ class _GameState extends State<Game> {
             child: SingleChildScrollView(child: Text(""))),
       ),*/
       body: Container(
-        child: (scenarioLoaded == false)
+        child: (scenarioLoaded == false )
             ? Center(
                 child: CircularProgressIndicator(),
               )
@@ -168,34 +174,37 @@ class _GameState extends State<Game> {
                     child: Container(
                       alignment: Alignment.center,
                       color: Colors.red,
-                      child: Container(
-                          //alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 10),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.red[800]),
-                              borderRadius: BorderRadius.circular(15)),
-                          child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.5,
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(Icons.timer),
-                                    Text("Kalan Süre: " + timeCounterText,
-                                        style: TextStyle(
-                                          color: timeCounterColor,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                          /*shadows: [
+                      child: (timeDuration <= 0 || timeCounterText == "")
+                          ? LinearProgressIndicator(backgroundColor: Colors.white30,)
+                          : Container(
+                              //alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.red[800]),
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Icon(Icons.timer),
+                                        Text("Kalan Süre: " + timeCounterText,
+                                            style: TextStyle(
+                                              color: timeCounterColor,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                              /*shadows: [
                               Shadow(
                                   color: Colors.red[900],
                                   offset: Offset(3, 2),
                                   blurRadius: 1),
                             ]*/
-                                        )),
-                                  ]))),
+                                            )),
+                                      ]))),
                     ),
                   )
                 ],
@@ -214,10 +223,10 @@ class _GameState extends State<Game> {
         .then((Scenario datas) {
           curScenario = datas;
           print(">>> Senaryo Yüklendi");
-          //set gameicons according to current scenario
-          // setState(() {
-          //gameItemList.add(GameItem("flover"));
-          //});
+          // get time duration from scenario to game
+          setState(() {
+            timeDuration = datas.time;
+          });
         })
         .catchError((err) => print("Hata: " + err.toString()))
         .whenComplete(() {
@@ -263,7 +272,8 @@ class _GameState extends State<Game> {
         locatingAddress.setApartmentNo = randomApartmentNumber;
         locatingAddress.setCurFloor = randomFloorNumber;
         locatingAddress.setCurHouse = randomHouseNumber;
-        print("LocAdd " + getAddressText(reqAddress:locatingAddress,addressLevel: "3"));
+        print("LocAdd " +
+            getAddressText(reqAddress: locatingAddress, addressLevel: "3"));
 
         return locatingAddress;
       }
@@ -366,9 +376,12 @@ class _GameState extends State<Game> {
                 isRightSide: false));
           break;
         case "floorView":
-        if (curAddress.floorNo < world.streetList[curAddress.streetNo].apartmentList[curAddress.apartmentNo].floorList.length-1)
-          buttonList.add(displaySideMenuItem(
-              "assets/gameIcons/up-floor.png", "Üst Kata", "upFloor"));
+          if (curAddress.floorNo <
+              world.streetList[curAddress.streetNo]
+                      .apartmentList[curAddress.apartmentNo].floorList.length -
+                  1)
+            buttonList.add(displaySideMenuItem(
+                "assets/gameIcons/up-floor.png", "Üst Kata", "upFloor"));
           if (curAddress.floorNo > 0)
             buttonList.add(displaySideMenuItem(
                 "assets/gameIcons/down-floor.png", "Alt Kata", "downFloor"));
@@ -553,51 +566,65 @@ class _GameState extends State<Game> {
       
     }*/
   }
-  String getAddressText({Address reqAddress,addressLevel}){
-    Address selectedAddress=reqAddress;
-    String currentAddressText,streetName,apartmentName,floorName,houseName;
+
+  String getAddressText({Address reqAddress, addressLevel}) {
+    Address selectedAddress = reqAddress;
+    String currentAddressText, streetName, apartmentName, floorName, houseName;
     switch (addressLevel) {
       case "0":
       case "streetView":
         streetName = world.streetList[selectedAddress.streetNo].name;
-        currentAddressText =streetName;
+        currentAddressText = streetName;
         break;
       case "1":
         streetName = world.streetList[selectedAddress.streetNo].name;
-        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
-        currentAddressText=streetName+" / "+apartmentName;
+        apartmentName = world.streetList[selectedAddress.streetNo]
+                .apartmentList[selectedAddress.apartmentNo].apartmentName +
+            " Apartmanı";
+        currentAddressText = streetName + " / " + apartmentName;
         break;
       case "2":
       case "floorView":
         streetName = world.streetList[selectedAddress.streetNo].name;
-        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
-        if (selectedAddress.floorNo>0){
-          floorName=selectedAddress.floorNo.toString() + ". Kat";
-        }else if (selectedAddress.floorNo==0){
-          floorName="Giriş Kat";
-        }else if (selectedAddress.floorNo<0){
-          floorName="Bodrum Katı";
+        apartmentName = world.streetList[selectedAddress.streetNo]
+                .apartmentList[selectedAddress.apartmentNo].apartmentName +
+            " Apartmanı";
+        if (selectedAddress.floorNo > 0) {
+          floorName = selectedAddress.floorNo.toString() + ". Kat";
+        } else if (selectedAddress.floorNo == 0) {
+          floorName = "Giriş Kat";
+        } else if (selectedAddress.floorNo < 0) {
+          floorName = "Bodrum Katı";
         }
-        currentAddressText=streetName+" / "+apartmentName+" ("+floorName+")";
+        currentAddressText =
+            streetName + " / " + apartmentName + " (" + floorName + ")";
         break;
       case "3":
       case "roomView":
         streetName = world.streetList[selectedAddress.streetNo].name;
-        apartmentName = world.streetList[selectedAddress.streetNo].apartmentList[selectedAddress.apartmentNo].apartmentName+" Apartmanı";
-        if (selectedAddress.floorNo>0){
-          floorName=selectedAddress.floorNo.toString() + ". Kat";
-        }else if (selectedAddress.floorNo==0){
-          floorName="Giriş Kat";
-        }else if (selectedAddress.floorNo<0){
-          floorName="Bodrum Katı";
+        apartmentName = world.streetList[selectedAddress.streetNo]
+                .apartmentList[selectedAddress.apartmentNo].apartmentName +
+            " Apartmanı";
+        if (selectedAddress.floorNo > 0) {
+          floorName = selectedAddress.floorNo.toString() + ". Kat";
+        } else if (selectedAddress.floorNo == 0) {
+          floorName = "Giriş Kat";
+        } else if (selectedAddress.floorNo < 0) {
+          floorName = "Bodrum Katı";
         }
-        houseName="Daire-" + selectedAddress.houseNo.toString();
-        currentAddressText=streetName+" / "+apartmentName+" ("+floorName+") / "+houseName;
+        houseName = "Daire-" + selectedAddress.houseNo.toString();
+        currentAddressText = streetName +
+            " / " +
+            apartmentName +
+            " (" +
+            floorName +
+            ") / " +
+            houseName;
         break;
       default:
         return "err: Address Error";
     }
-    
+
     return currentAddressText;
   }
 
@@ -607,7 +634,8 @@ class _GameState extends State<Game> {
       alignment: Alignment.center,
       color: Colors.orange[50],
       child: AutoSizeText(
-        getAddressText(reqAddress:curAddress,addressLevel: curAddress.areaType),
+        getAddressText(
+            reqAddress: curAddress, addressLevel: curAddress.areaType),
         maxLines: 1,
         minFontSize: 8,
         style: TextStyle(
@@ -1253,7 +1281,9 @@ class _GameState extends State<Game> {
     // select a random hint level
     int hintLevel = Random().nextInt(4);
     // set hint text dependin on item
-    String hintText = getAddressText(reqAddress:unfoundedGameItemAddressList[hintItemNo],addressLevel:hintLevel.toString());
+    String hintText = getAddressText(
+        reqAddress: unfoundedGameItemAddressList[hintItemNo],
+        addressLevel: hintLevel.toString());
     // show dialog
     showDialog(
         context: context,

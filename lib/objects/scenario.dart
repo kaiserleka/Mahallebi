@@ -5,11 +5,13 @@ class Scenario{
   int _order;
   int _no;
   String _name;
+  int _time;
   List<Task> _taskList=[];
-  Scenario({order,no,name,taskList}){
+  Scenario({order,no,name,time,taskList}){
     this._order=order;
     this._no=no;
     this._name=name;
+    this._time=time;
     this._taskList=taskList;
     
   }
@@ -30,6 +32,7 @@ class Scenario{
      // order:receivedData["order"],
       no:receivedData["no"],
       name:receivedData["name"],
+      time:receivedData["time"],
       taskList:convertedTaskList,
       );
   }
@@ -50,6 +53,8 @@ class Scenario{
   set setName (reqData){
     this._name=reqData;
   }
+  // name
+  int get time => this._time;
   // tasks
   List<Task> get taskList => this._taskList;
 }

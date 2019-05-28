@@ -45,7 +45,7 @@ class _GameState extends State<Game> {
   //tasks
   Scenario curScenario;
   // number of hint
-  int hintCount = 30;
+  int hintCount = 99;
   // loading vars
   bool scenarioLoaded = false;
   //  time counter
@@ -297,7 +297,7 @@ class _GameState extends State<Game> {
       // find random room to locate
       int selectedStreet = locatingAddress.streetNo;
       int selectedApartment = locatingAddress.apartmentNo;
-      int selectedFloor = 0;
+      int selectedFloor = locatingAddress.floorNo;
 
       /// !!! locatingAddress.floorNo;
       int selectedHouse = locatingAddress.houseNo;
@@ -1055,6 +1055,10 @@ class _GameState extends State<Game> {
                             curScenario.taskList[curRoom.gameItemNo]
                                 .setAsCompleted();
                             // also remove from unfounded address list
+                            print("\nst: "+curAddress.streetNo.toString());
+                            print("ap: "+curAddress.apartmentNo.toString());
+                            print("fl: "+curAddress.floorNo.toString());
+                            print("ho: "+curAddress.houseNo.toString()+"\n");
                             unfoundedGameItemAddressList.removeWhere(
                                 (address) =>
                                     address.streetNo == curAddress.streetNo &&

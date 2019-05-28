@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:mahallebi/tools/custom_icons_icons.dart';
 
 class Task{
   int _order;
   
   String _detail;
-  String _gameItemIconName;
+  String _gameItemName;
   int _gameItemQuantity;
   bool _isCompleted=false;
-  Task(this._detail,this._gameItemIconName,this._gameItemQuantity);
+  Task(this._detail,this._gameItemName,this._gameItemQuantity);
   // name
   String get detail => this._detail;
   // is completed
@@ -16,16 +17,16 @@ class Task{
     this._isCompleted=true;
   }
   // game item icon name
-  String get gameItemIconName=> this._gameItemIconName;
+  String get gameItemName=> this._gameItemName;
   // game item icon's iconData
-  IconData get gameItemIconData{
-    switch (this._gameItemIconName) {
+  String get gameItemImageAddress{
+    switch (this._gameItemName) {
     case "baby":
-      return Icons.child_friendly;
+      return "assets/itemImages/sunflower.png";
     case "flover":
-      return Icons.local_florist;
+      return "assets/itemImages/baby.png";
         default:
-      return Icons.not_listed_location;
+      return "assets/itemImages/sunflower.png";
     }
   }
   // game item icon quantity

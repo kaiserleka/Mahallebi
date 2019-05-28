@@ -7,13 +7,15 @@ class Scenario{
   String _name;
   String _description;
   int _time;
+  int _hintCount;
   List<Task> _taskList=[];
-  Scenario({order,no,name,description,time,taskList}){
+  Scenario({order,no,name,description,time,hintCount,taskList}){
     this._order=order;
     this._no=no;
     this._name=name;
     this._description=description;
     this._time=time;
+    this._hintCount=hintCount;
     this._taskList=taskList;
     
   }
@@ -36,6 +38,7 @@ class Scenario{
       name:receivedData["name"],
       description:receivedData["description"],
       time:receivedData["time"],
+      hintCount:receivedData["hintCount"],
       taskList:convertedTaskList,
       );
   }
@@ -60,6 +63,8 @@ class Scenario{
   String get description => this._description;
   // time
   int get time => this._time;
+  // hint count
+  int get hintCount => this._hintCount;
   // tasks
   List<Task> get taskList => this._taskList;
 }

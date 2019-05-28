@@ -12,7 +12,7 @@ import 'objects/street.dart';
 import 'objects/gameItem.dart';
 
 class Game extends StatefulWidget {
-  Game({Key key, int this.scenario}) : super(key: key);
+  Game({Key key, this.scenario}) : super(key: key);
   //Uygulama başlığı
   final int scenario;
 
@@ -45,7 +45,7 @@ class _GameState extends State<Game> {
   //tasks
   Scenario curScenario;
   // number of hint
-  int hintCount = 99;
+  int hintCount;
   // loading vars
   bool scenarioLoaded = false;
   //  time counter
@@ -233,6 +233,7 @@ class _GameState extends State<Game> {
           // get time duration from scenario to game
           setState(() {
             timeDuration = datas.time;
+            hintCount = datas.hintCount;
           });
         })
         .catchError((err) => print("Hata: " + err.toString()))
@@ -657,15 +658,28 @@ class _GameState extends State<Game> {
   Widget displayPanel() {
     List<Widget> gameItemsWidgetList = [];
     for (var i = 0; i < curScenario.taskList.length; i++) {
-      Color curColor = (curScenario.taskList[i].isCompleted == false)
+      /* Color curColor = (curScenario.taskList[i].isCompleted == false)
           ? Colors.black26
-          : Colors.indigo[700];
-      var curIcon = Icon(
+          : Colors.indigo[700];*/
+      var curImage = (curScenario.taskList[i].isCompleted == true)
+              ? Image.asset(
+                  curScenario.taskList[i].gameItemImageAddress,
+                  height: 36,
+                )
+              : Image.asset(
+                  curScenario.taskList[i].gameItemImageAddress,
+                  height: 36,
+                  color: Colors.red[100],
+                ) /*Icon(
         curScenario.taskList[i].gameItemIconData,
         color: curColor,
         size: 36,
-      );
-      gameItemsWidgetList.add(curIcon);
+      )*/
+          ;
+      gameItemsWidgetList.add(Padding(
+        padding: EdgeInsets.symmetric(horizontal: 2),
+        child: curImage,
+      ));
     }
     return Container(
         color: Colors.red[800],
@@ -1017,22 +1031,23 @@ class _GameState extends State<Game> {
                           child: Container(
                             //alignment: Alignment.topRight,
                             margin: EdgeInsets.all(15),
+                            padding: EdgeInsets.all(15),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color: Colors.white12,
                                 shape: BoxShape.rectangle,
                                 boxShadow: [
                                   BoxShadow(
-                                      color: Colors.yellow, blurRadius: 30),
+                                      color: Colors.white, blurRadius: 15),
                                 ]
                                 //gradient: Gradient(colors: [Colors.teal,Colors.teal],stops: [0.5,0.2]),
                                 //backgroundBlendMode: BlendMode.softLight
                                 ),
-                            child: Icon(
+                            child: Image.asset(
                               curScenario.taskList[curRoom.gameItemNo]
-                                  .gameItemIconData,
-                              color: Colors.indigo[700],
-                              size: screenWidth * 0.15,
+                                  .gameItemImageAddress,
+                              // color: Colors.indigo[700],
+                              height: screenWidth * 0.15,
                             ),
                           ),
                           onTap: () {
@@ -1055,10 +1070,11 @@ class _GameState extends State<Game> {
                             curScenario.taskList[curRoom.gameItemNo]
                                 .setAsCompleted();
                             // also remove from unfounded address list
-                            print("\nst: "+curAddress.streetNo.toString());
-                            print("ap: "+curAddress.apartmentNo.toString());
-                            print("fl: "+curAddress.floorNo.toString());
-                            print("ho: "+curAddress.houseNo.toString()+"\n");
+                            print("\nst: " + curAddress.streetNo.toString());
+                            print("ap: " + curAddress.apartmentNo.toString());
+                            print("fl: " + curAddress.floorNo.toString());
+                            print(
+                                "ho: " + curAddress.houseNo.toString() + "\n");
                             unfoundedGameItemAddressList.removeWhere(
                                 (address) =>
                                     address.streetNo == curAddress.streetNo &&
@@ -1450,7 +1466,7 @@ class _GameState extends State<Game> {
   }
 
   String hintCountText() {
-    if (hintCount > 0)
+    if (hintCount != null) if (hintCount > 0)
       return hintCount.toString();
     else
       return "-";

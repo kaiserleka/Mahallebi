@@ -6,6 +6,7 @@ class Apartment {
   int _no;
   String _name;
   //String _image;
+  bool _isLocked;
   String _typeImage;
   double _heightImage;
   double _widthImage;
@@ -14,7 +15,7 @@ class Apartment {
   Apartment(no) {
     this._no = no;
     //create random type for this unit
-    
+    this._isLocked=false;
     var type = Random().nextInt(InfoCenter.apartmentTypeList.length);
     this._typeImage = InfoCenter.apartmentTypeList[type]["image"];
     this._heightImage = InfoCenter.apartmentTypeList[type]["height"];
@@ -40,6 +41,8 @@ class Apartment {
   int get apartmentNo => this._no;
   // apt name
   String get apartmentName => this._name;
+  // apt is locked ?
+  bool get isLocked => this._isLocked;
   // floors
   List<Floor> get floorList => this._floorList;
 }

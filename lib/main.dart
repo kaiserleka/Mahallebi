@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mahallebi/settingsMenu.dart';
+import 'package:mahallebi/tutorial.dart';
 import 'game.dart';
 import 'home.dart';
 import 'scenarioMenu.dart';
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => new Home(),
         '/scenarioMenu': (context)=> new ScenarioMenu(),
-        '/settingsMenu': (context)=> new SettingsMenu()
+        '/settingsMenu': (context)=> new SettingsMenu(),
+        '/tutorial': (context)=> new Tutorial()
       },
       onGenerateRoute: (RouteSettings settings) {
         List<String> pathElements = settings.name.split("/");
@@ -28,9 +30,12 @@ class MyApp extends StatelessWidget {
       },
       title: 'Mahallebi',
       theme: ThemeData(
-        // red
+        //appBarTheme: AppBarTheme(color: Colors.redAccent[700]),
+        //dialogTheme: DialogTheme(backgroundColor:  Colors.redAccent[700]),
         primarySwatch: Colors.red,
+        
       ),
+      debugShowCheckedModeBanner: false,
       // home: new Homes(),
     );
   }

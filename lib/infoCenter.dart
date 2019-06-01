@@ -5,7 +5,8 @@ class InfoCenter {
     "Spor Caddesi",
     "Ulus Caddesi",
     "Aydınlık Caddesi",
-    "Cumhuriyet Caddesi"];
+    "Cumhuriyet Caddesi",
+    "Yakamoz Caddesi"];
 
   //Apartment List
   static List<Map<String, dynamic>> apartmentTypeList = [

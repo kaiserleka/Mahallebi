@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mahallebi/tools/header.dart';
 import 'dart:math';
 import 'getDataFromJSON.dart';
 import 'objects/scenario.dart';
@@ -113,22 +115,7 @@ class _GameState extends State<Game> {
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-            child: Text(
-          "Mahallebi",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w600,
-            shadows: <Shadow>[
-              Shadow(
-                offset: Offset(1.0, 1.0),
-                blurRadius: 4.0,
-                color: Color.fromARGB(255, 0, 0, 0),
-              ),
-            ],
-          ),
-        )),
+        title: Center(child: Header("Mahallebi")),
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -139,83 +126,118 @@ class _GameState extends State<Game> {
           )
         ],
       ),
-      /*drawer: Drawer(
+      /* drawer: Drawer(
         child: new Container(
             padding: EdgeInsets.fromLTRB(10, 25, 10, 5),
-            color: Colors.green[700],
-            child: SingleChildScrollView(child: Text(""))),
-      ),*/
-      body: Container(
-        child: (scenarioLoaded == false)
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  //Geçerli Adres Alanı
-                  Expanded(flex: 1, child: displayAddressBar(curAddress)),
-                  //Oyun alanı
-                  SizedBox(
-                    //flex: 7,
-                    height: screenWidth,
-                    child: Container(
-                      //color: Colors.red[800],
-                      child: displayArea(curAddress),
-                    ),
+            color: Colors.deepOrange[400],
+            child: Column(
+              children: <Widget>[
+                /*UserAccountsDrawerHeader(
+                  accountName: Text("LEKA"),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.redAccent,
+                    child: Image.asset("assets/interface/header2.png"),
                   ),
-                  //Oyun içi panel
-                  Expanded(
-                    flex: 3,
-                    child: displayPanel(),
-                  ),
-                  Expanded(
-                    flex: 2,
+                ),*/
+                Expanded(
                     child: Container(
+                  color: Colors.white,
+                  child: ExpansionTile(
+                    leading: Icon(Icons.settings),
+                    backgroundColor: Colors.white,
+                    title: Container(
                       alignment: Alignment.center,
-                      color: Colors.red,
-                      child: (timeDuration <= 0)
-                          ? SizedBox(width: 0)
-                          : (timeCounterText == "")
-                              ? LinearProgressIndicator(
-                                  backgroundColor: Colors.white30,
-                                )
-                              : Container(
-                                  //alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border:
-                                          Border.all(color: Colors.red[800]),
-                                      borderRadius: BorderRadius.circular(15)),
-                                  child: SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.5,
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Icon(Icons.timer),
-                                            Text(
-                                                "Kalan Süre: " +
-                                                    timeCounterText,
-                                                style: TextStyle(
-                                                  color: timeCounterColor,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w700,
-                                                  /*shadows: [
+                      child: Text("Ayarlar"),
+                    ),
+                    children: <Widget>[
+                      ListTile(
+                        title: Text("Ses Efeklerini Aç/Kapa"),
+                      )
+                    ],
+                  ),
+                ))
+              ],
+            )),
+      ),*/
+      body: Builder(
+        builder: (context) {
+          return Container(
+            child: (scenarioLoaded == false)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      //Geçerli Adres Alanı
+                      Expanded(flex: 1, child: displayAddressBar(curAddress)),
+                      //Oyun alanı
+                      SizedBox(
+                        //flex: 7,
+                        height: screenWidth,
+                        child: Container(
+                          //color: Colors.red[800],
+                          child: displayArea(curAddress, context),
+                        ),
+                      ),
+                      //Oyun içi panel
+                      Expanded(
+                        flex: 3,
+                        child: displayPanel(),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          alignment: Alignment.center,
+                          color: Colors.red[500],
+                          child: (timeDuration <= 0)
+                              ? SizedBox(width: 0)
+                              : (timeCounterText == "")
+                                  ? LinearProgressIndicator(
+                                      backgroundColor: Colors.white30,
+                                    )
+                                  : Container(
+                                      //alignment: Alignment.center,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: Colors.red[800]),
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Icon(Icons.timer),
+                                                Text(
+                                                    "Kalan Süre: " +
+                                                        timeCounterText,
+                                                    style: TextStyle(
+                                                      color: timeCounterColor,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      /*shadows: [
                               Shadow(
                                   color: Colors.red[900],
                                   offset: Offset(3, 2),
                                   blurRadius: 1),
                             ]*/
-                                                )),
-                                          ]))),
-                    ),
-                  )
-                ],
-              ),
+                                                    )),
+                                              ]))),
+                        ),
+                      )
+                    ],
+                  ),
+          );
+        },
       ),
     );
   }
@@ -325,7 +347,7 @@ class _GameState extends State<Game> {
         unfoundedGameItemAddressList.length.toString());
   }
 
-  Widget displayArea(Address curAddress) {
+  Widget displayArea(Address curAddress, context) {
     //print(">>> Adres: " + curAddress.fullAddress);
     return SingleChildScrollView(
         reverse: reverseSituation,
@@ -340,7 +362,7 @@ class _GameState extends State<Game> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               displaySideMenu("left"),
-              displayGameArea(curAddress),
+              displayGameArea(curAddress, context),
               // show right side menu for game if area type is streetview
               (curAddress.areaType == "streetView")
                   ? displaySideMenu("right")
@@ -460,6 +482,10 @@ class _GameState extends State<Game> {
           Image.asset(
             buttonIconImage,
             width: screenWidth / 6,
+            // color: Colors.white,
+            // colorBlendMode: (world.streetList[targetValue].isAccessible)
+            //    ? BlendMode.dstATop
+            //    : BlendMode.hue,
           ),
           SizedBox(
             height: screenWidth / 75,
@@ -469,22 +495,31 @@ class _GameState extends State<Game> {
             textAlign: TextAlign.center,
             minFontSize: 8,
             maxLines: 2,
+            /*style: TextStyle(
+                color: (world.streetList[targetValue].isAccessible)
+                    ? Colors.black
+                    : Colors.grey),*/
           ),
         ]),
         onPressed: () {
           switch (curAddress.areaType) {
             case "streetView":
-              setState(() {
-                curAddress.setStreetNo = targetValue;
-              });
-              if (horitantalPassing == true)
+              if (world.streetList[targetValue].isAccessible) {
+                setState(() {
+                  curAddress.setStreetNo = targetValue;
+                });
+
+                /* if (horitantalPassing == true)
                 setState(() {
                   //reverseSituation = true;
                 });
               else
                 setState(() {
                   //reverseSituation = false;
-                });
+                }); */
+              } else {
+                print("Erişilemez");
+              }
 
               break;
             case "floorView":
@@ -521,7 +556,7 @@ class _GameState extends State<Game> {
     );
   }
 
-  Widget displayGameArea(Address curAddress) {
+  Widget displayGameArea(Address curAddressi, context) {
     List units;
     switch (curAddress.areaType) {
       //street view
@@ -550,7 +585,8 @@ class _GameState extends State<Game> {
         child: Row(
           children: <Widget>[
             displayWestOfArea(curAddress.areaType, screenWidth),
-            displayCenterOfArea(curAddress.areaType, screenWidth, units),
+            displayCenterOfArea(
+                curAddress.areaType, screenWidth, units, context),
             displayEastOfArea(curAddress.areaType, screenWidth),
           ],
         ));
@@ -793,7 +829,8 @@ class _GameState extends State<Game> {
                   onTap: () {
                     if (gamePaused == false &&
                         hintCount > 0 &&
-                        unfoundedGameItemAddressList.length > 0) showHint();
+                        unfoundedGameItemAddressList.length > 0)
+                      showHint();//showGameDialogWindow(); //
                   },
                 )),
             SizedBox(
@@ -911,7 +948,7 @@ class _GameState extends State<Game> {
     ));
   }
 
-  Widget displayCenterOfArea(areaType, screenWidth, units) {
+  Widget displayCenterOfArea(areaType, screenWidth, units, context) {
     List<Widget> items = [];
     List<Widget> touchableItems = [];
     Widget curWidget;
@@ -926,8 +963,22 @@ class _GameState extends State<Game> {
           height: screenWidth * (units[i].unitImageHeight),
         ),
         onTap: () {
-          //make them able to enter
-          passToInside(areaType, i);
+          // if not locked
+          if (!units[i].isLocked)
+            //make them able to enter
+            passToInside(areaType, i);
+          else {
+            switch (curAddress.areaType) {
+              case "streetView":
+                showGameInfoWindow("Apartman Kilitli", Icons.lock);
+                break;
+              case "floorView":
+                showGameInfoWindow("Kapı Kilitli", Icons.lock);
+                break;
+                break;
+              default:
+            }
+          }
         },
       );
       touchableItems.add(curWidget);
@@ -1102,6 +1153,107 @@ class _GameState extends State<Game> {
     return Column(
       children: items,
     );
+  }
+
+  void showGameDialogWindow() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Dialog"),
+            content: Container(
+              height: 200,
+              width: 200,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.fromLTRB(20, 5, 5, 5),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(flex: 1,child: SizedBox(),),
+                          Expanded(flex: 5,child: Text(
+                            "-",
+                            textAlign: TextAlign.right,
+                          ),),
+                          Expanded(flex: 2,child:Container(
+                            margin: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(Icons.person),
+                          ))
+                        ],
+                      )),
+                   Container(
+                      margin: EdgeInsets.fromLTRB(5, 5, 20, 5),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(flex: 2, child:Container(
+                            margin: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(Icons.person),
+                          ),),
+                          Expanded(flex: 5,child: Text(
+                            "-",
+                            textAlign: TextAlign.right,
+                          ),),
+                          Expanded(flex: 1,child: SizedBox(),),
+                        
+                        ],
+                      )),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void showGameInfoWindow(dialogText, dialogIcon) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height / 4,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                    flex: 1,
+                    child: Icon(
+                      dialogIcon,
+                      size: 54,
+                    )),
+                Expanded(
+                    flex: 2,
+                    child: Text(
+                      dialogText,
+                      maxLines: 1,
+                      textScaleFactor: 0.5,
+                      style: TextStyle(
+                        fontSize: 54,
+                      ),
+                    )),
+              ],
+            ),
+          );
+        });
   }
 
   Widget displayEastOfArea(areaType, screenWidth) {

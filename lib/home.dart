@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Image.asset(
-              "assets/interface/header1.png",
+              "assets/interface/header2.png",
               width: MediaQuery.of(context).size.width,
             ),
             /* Text(
@@ -37,9 +37,9 @@ class _HomeState extends State<Home> {
                 buttonIcon: Icons.playlist_play,
                 target: "scenarioMenu"),
             /*menuItem(
-              buttonText: "Serbest Dolaş",
+              buttonText: "Nasıl Oynanır?",
               buttonIcon: Icons.play_arrow,
-            ),*/
+            target: "tutorial"),*/
            /* menuItem(
                 buttonText: "Ayarlar",
                 buttonIcon: Icons.settings,
